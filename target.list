@@ -1,0 +1,34 @@
+GET http://127.0.0.1:9080/v1/resources/13229860/download
+Accept-Language: en
+Accept: aplication/json
+Content-Type: application/json
+Host: api.freepik.com
+X-Freepik-API-Key: 8888
+
+GET http://127.0.0.1:9080/v1/icons/10740624/download
+Accept-Language: es
+Accept: aplication/json
+Content-Type: application/json
+Host: api.freepik.com
+X-Freepik-API-Key: 8888
+
+GET http://127.0.0.1:9080/v1/download?id=13241130
+Accept-Language: en
+Accept: aplication/json
+Content-Type: application/json
+Host: api.freepik.com
+X-Freepik-API-Key: 7777
+
+GET http://127.0.0.1:9080/v1/resources/13229860
+Accept-Language: es
+Accept: aplication/json
+Content-Type: application/json
+Host: api.freepik.com
+X-Freepik-API-Key: 7777
+
+GET http://127.0.0.1:9080/v1/resources/1876475/download/jpg
+Accept-Language: en
+Accept: aplication/json
+Content-Type: application/json
+Host: api.freepik.com
+X-Freepik-API-Key: 7777

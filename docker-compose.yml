@@ -1,0 +1,94 @@
+version: "3.3"
+
+services:
+  apisix-etcd:
+    image: bitnami/etcd:3.5.7
+    container_name: apisix-etcd
+    hostname: apisix-etcd
+    environment:
+      - ALLOW_NONE_AUTHENTICATION=yes
+      - ETCD_LISTEN_CLIENT_URLS=http://10.29.0.2:2379
+      - ETCD_ADVERTISE_CLIENT_URLS=http://10.29.0.2:2379
+    ports:
+      - "2379-2380:2379-2380"
+    volumes:
+      - etcd:/bitnami/etcd/data
+    networks:
+      apisix:
+        ipv4_address: 10.29.0.2
+
+  apisix:
+    image: apache/apisix:3.6.0-debian
+    container_name: apisix
+    hostname: apisix
+    environment:
+      - APISIX_DEPLOYMENT_ETCD_HOST=apisix-etcd
+    ports:
+      - "9080:9080"
+      - "9180:9180"
+      - "9443:9443"
+      - "9091:9091" # 9090
+      - "9092:9092" # 9090
+      - "9100:9100"
+    volumes:
+      - ./apisix/config.yaml:/usr/local/apisix/conf/config.yaml
+      - ./plugins:/opt/apisix/plugins
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      apisix:
+        ipv4_address: 10.29.0.3
+
+  apisix-dashboard:
+    image: apache/apisix-dashboard:latest
+    container_name: apisix-dashboard
+    hostname: apisix-dashboard
+    ports:
+      - "8000:9000"
+    volumes:
+      - ./apisix-dashboard/conf.yaml:/usr/local/apisix-dashboard/conf/conf.yaml
+    networks:
+      apisix:
+        ipv4_address: 10.29.0.4
+
+  prometheus:
+    image: prom/prometheus:v2.48.0
+    container_name: apisix-prometheus
+    hostname: apisix-prometheus
+    restart: always
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    networks:
+      apisix:
+        ipv4_address: 10.29.0.5
+
+  grafana:
+    image: grafana/grafana:9.5.14
+    container_name: apisix-grafana
+    hostname: apisix-grafana
+    restart: always
+    environment:
+      - GF_SERVER_ROOT_URL=http://192.168.1.109:3000
+    ports:
+      - "3000:3000"
+    volumes:
+      - "./grafana/provisioning:/etc/grafana/provisioning"
+      - "./grafana/dashboards:/var/lib/grafana/dashboards"
+      - "./grafana/config/grafana.ini:/etc/grafana/grafana.ini"
+    networks:
+      apisix:
+        ipv4_address: 10.29.0.6
+
+volumes:
+  etcd:
+
+networks:
+  apisix:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        -
+          subnet: 10.29.0.0/24
