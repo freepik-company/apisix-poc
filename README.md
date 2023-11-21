@@ -1,4 +1,4 @@
-# POC APISIX
+# APISIX POC
 
 This project is a proof of concept of the API Gateway APISIX and how we can use it in our project.
 
